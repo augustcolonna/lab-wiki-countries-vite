@@ -1,8 +1,20 @@
 import { React } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axios from "axios";
+const apiURL = "https://ih-countries-api.herokuapp.com/countries/alpha3Code"
 
-const CountryDetails = ({ countries }) => {
+const CountryDetails = () => {
   const { countryId } = useParams();
+  const [countries, setCountries] = useState([])
+  const [fetching, setFetching] = useState(true);
+
+  useEffect(() => {
+    axios.get(apiURL).then((response) => {
+        setCountries(response.data);
+        setFetching(false);
+    });
+}, []);
 
   const filteredCountry = countries.filter((country) => {
     return country.alpha3Code === countryId;
@@ -11,6 +23,7 @@ const CountryDetails = ({ countries }) => {
   return (
     <>
       <div className="col-7">
+      {fetching && <p>...Loading Info</p>}
         <h1>{filteredCountry[0].name.official}</h1>
         <table className="table">
           <thead></thead>
